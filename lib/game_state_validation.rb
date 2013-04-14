@@ -38,10 +38,9 @@ class GameStateValidation
   end
 
   def out_of_turn?
-    # as x starts, o may never have more moves
     x_turns = @saved_state.select { |k,v| v == "X" }.size
     o_turns = @passed_state.select { |k,v| v == "O" }.size
-    o_turns > x_turns
+    (o_turns > x_turns) || (x_turns > o_turns + 1)
   end
 
   def pairs_with_values(hash)
@@ -51,5 +50,5 @@ class GameStateValidation
   def amount_with_values(hash)
     pairs_with_values(hash).size
   end
-    
+
 end
