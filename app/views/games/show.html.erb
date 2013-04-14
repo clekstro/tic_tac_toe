@@ -1,0 +1,54 @@
+<p class="instruction">Please make a move.</p>
+<%= content_for :game_js do %>
+  <script type="text/javascript">
+    $(document).ready(function(){
+      var playerLetter = "X";
+      var boardState = <%= @board_state.html_safe %>;
+      // update markup in case of refresh
+      updateBoardMarkup();
+
+      function clear(){
+        return !taken($(this)) ? $(this).html("") : false;
+      }
+
+      function addPreview(){
+        return !taken($(this)) ? $(this).html("<span class='letterPreview'>" + playerLetter + "</span>") : false;
+      }
+
+      $('td.field').hover(addPreview, clear);
+
+      function taken(field){
+        return boardState[field.attr('id')] !== ""
+      }
+
+      function updateBoardState(json) {
+        boardState = json;
+        updateBoardMarkup();
+      }
+
+      function updateBoardMarkup() {
+        $('td.field').each(function(){
+          fieldID = $(this).attr('id');
+          letter = boardState[fieldID];
+          if(letter != ""){
+            $(this).html("<span class=" + letter + ">" + letter + "</span");
+          }
+        });
+      }
+
+      $('td.field').click(function(){
+        var id = $(this).attr('id');
+        if(!taken($(this))){
+          boardState[id] = playerLetter;
+          $.ajax({
+            type: "POST",
+            url: "/games/" + <%= @game.id %> + "/move",
+            data: {board_state: boardState},
+            success: function(data) { updateBoardState(data); },
+            dataType: "JSON"
+          });
+        }
+      });
+    });
+  </script>
+<% end %>

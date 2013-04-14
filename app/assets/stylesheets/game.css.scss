@@ -1,0 +1,40 @@
+// Place all the styles related to the Game controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+$table-width: 463px;
+#content {
+  text-align: center;
+  width: $table-width;
+  margin: 0 auto;
+
+  table#gameboard {
+    margin-top: 40px;
+    layout: fixed;
+    width: $table-width;
+    td.field {
+      height: 140px;
+      width: 140px;
+      border-collapse: collapse;
+      font-size: 50pt;
+      color: gray;
+      &.top {
+        border-top: 4px solid black;
+      }
+      &.right {
+        border-right: 4px solid black;
+      }
+      &.bottom {
+        border-bottom: 4px solid black;
+      }
+      &.left {
+        border-left: 4px solid black;
+      }
+      span.X {
+        color: blue;
+      }
+      span.O {
+        color: red;
+      }
+    }
+  }
+}

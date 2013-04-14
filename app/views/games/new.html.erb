@@ -1,0 +1,8 @@
+<p class="instruction">Please select an opponent: </p>
+<%= form_for @game do |f| %>
+  <% @game_types.each do |type| %>
+    <%= label_tag type.to_sym %>
+    <%= radio_button_tag :game_type, type.to_sym %>
+  <% end %>
+  <%= f.submit "Start Game" %>
+<%end %>
