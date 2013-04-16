@@ -27,4 +27,6 @@ group :test, :development do
   gem 'cucumber-rails'
   gem 'database_cleaner'
   gem 'pry'
+  gem 'awesome_print'
+  gem 'poltergeist'
 end
