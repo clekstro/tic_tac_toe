@@ -28,9 +28,9 @@ class GamesController < ApplicationController
   end
 
   def move
-    @game.board_state = params[:board_state]
+    @game.board_state = params[:board_state] # GameStrategizer.new(params[:board_state]).devise_move
     @game.save
-    render :json => @game.board_state.to_json, status: :ok
+    render_board_state_json(:ok)
   end
 
   private
@@ -44,7 +44,11 @@ class GamesController < ApplicationController
   end
 
   def check_board_state
-    redirect_to game_path(@game) and return unless valid_board_state?
+    render_board_state_json(422) and return unless valid_board_state?
+  end
+
+  def render_board_state_json(status)
+    render(json: @game.board_state.to_json, status: status) 
   end
 
   def valid_player?

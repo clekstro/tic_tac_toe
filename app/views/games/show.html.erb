@@ -2,10 +2,6 @@
 <%= content_for :game_js do %>
   <script type="text/javascript">
     $(document).ready(function(){
-      var playerLetter = "X";
-      var boardState = <%= @board_state.html_safe %>;
-      // update markup in case of refresh
-      updateBoardMarkup();
 
       function clear(){
         return !taken($(this)) ? $(this).html("") : false;
@@ -15,14 +11,12 @@
         return !taken($(this)) ? $(this).html("<span class='letterPreview'>" + playerLetter + "</span>") : false;
       }
 
-      $('td.field').hover(addPreview, clear);
-
       function taken(field){
         return boardState[field.attr('id')] !== ""
       }
 
-      function updateBoardState(json) {
-        boardState = json;
+      function updateBoardState(state) {
+        boardState = state;
         updateBoardMarkup();
       }
 
@@ -30,9 +24,7 @@
         $('td.field').each(function(){
           fieldID = $(this).attr('id');
           letter = boardState[fieldID];
-          if(letter != ""){
-            $(this).html("<span class=" + letter + ">" + letter + "</span");
-          }
+          letter == "" ? clear() : $(this).html("<span class=" + letter + ">" + letter + "</span");
         });
       }
 
@@ -45,10 +37,17 @@
             url: "/games/" + <%= @game.id %> + "/move",
             data: {board_state: boardState},
             success: function(data) { updateBoardState(data); },
+            error: function(data) { updateBoardState($.parseJSON(data.responseText)); },
             dataType: "JSON"
           });
         }
       });
+
+      playerLetter = "X";
+      boardState = <%= @board_state.html_safe %>;
+
+      updateBoardMarkup(boardState);
+      $('td.field').hover(addPreview, clear);
     });
   </script>
 <% end %>
