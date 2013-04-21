@@ -11,6 +11,7 @@ $table-width: 463px;
     margin-top: 40px;
     layout: fixed;
     width: $table-width;
+    cursor: pointer;
     td.field {
       height: 140px;
       width: 140px;
@@ -35,6 +36,9 @@ $table-width: 463px;
       span.O {
         color: red;
       }
+    }
+    td.winner {
+      text-decoration: blink;
     }
   }
 }
