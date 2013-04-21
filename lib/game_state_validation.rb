@@ -12,7 +12,7 @@ class GameStateValidation
   private
 
   def invalid?
-    security_risk? || forged_history? || no_move? || multiple_moves? || out_of_turn?
+    security_risk? || forged_history? || no_move? || multiple_moves? || out_of_turn? || game_over?
   end
 
   def security_risk?
@@ -61,6 +61,10 @@ class GameStateValidation
     prev = value_delta(@saved_state, "X", "O")
     curr = value_delta(@passed_state, "X", "O")
     prev + curr >= 2
+  end
+
+  def game_over?
+    @saved_state.count { |k,v| v == "X" } == 3 || @saved_state.count { |k,v| v == "O" } == 3
   end
 
   def pairs_with_values(hash)

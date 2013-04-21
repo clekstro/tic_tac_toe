@@ -15,9 +15,21 @@
         return boardState[field.attr('id')] !== ""
       }
 
+      function endGame() {
+        $('.instruction').html('<p class="notice">GAME OVER!</p><%= escape_javascript(render :partial => '/games/form') %>');
+        gameOver = true;
+      }
+
       function updateBoardState(state) {
         boardState = state;
         updateBoardMarkup();
+      }
+
+      function updateGameStatus(data) {
+        if(data.gameOver){
+          endGame();
+          showWinner(data.winningRow, 3);
+        }
       }
 
       function updateBoardMarkup() {
@@ -28,6 +40,17 @@
         });
       }
 
+      function showWinner(winningRow, repeats) {
+        $('td.field').each(function(){
+          if($.inArray($(this).attr('id'), winningRow) > -1){
+            for(i=0;i<repeats;i++){
+              $(this).fadeOut(300).fadeIn(300);
+            }
+          }
+        });
+      }
+
+
       $('td.field').click(function(){
         var id = $(this).attr('id');
         if(!taken($(this))){
@@ -36,8 +59,8 @@
             type: "POST",
             url: "/games/" + <%= @game.id %> + "/move",
             data: {board_state: boardState},
-            success: function(data) { updateBoardState(data); },
-            error: function(data) { updateBoardState($.parseJSON(data.responseText)); },
+            success: function(data) { updateBoardState($.parseJSON(data.boardState)); updateGameStatus(data) },
+            error: function(data) { updateBoardState($.parseJSON(data.responseText)); updateGameStatus($.parseJSON(data.responseText))},
             dataType: "JSON"
           });
         }
@@ -45,6 +68,7 @@
 
       playerLetter = "X";
       boardState = <%= @board_state.html_safe %>;
+      gameOver = false;
 
       updateBoardMarkup(boardState);
       $('td.field').hover(addPreview, clear);

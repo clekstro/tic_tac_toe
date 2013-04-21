@@ -9,6 +9,17 @@ Feature: Play Against Computer
     And the computer should respond
     And it should be my turn to play
 
+  Scenario: End of Game (Victory)
+    Given a player has won
+    Then the game should end
+    And I should be asked to play again
+
+  Scenario: End of Game (Tie)
+    Given no player has won
+    And all the places are taken
+    Then the game should end
+    And I should be asked to play again
+
   Scenario: Game Interactivity for Non-Participant
     Given someone else started a computer game
     And I attempt to play it
