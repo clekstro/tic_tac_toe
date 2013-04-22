@@ -106,15 +106,15 @@ describe BoardParser do
       parser.board_state["C2"] = "O"
       parser.game_over?.should be_false
       parser.board_state["A2"] = "X"
-      parser.game_over?.should be_true 
+      parser.game_over?.should be_true
     end
 
     it "retrieves spaces of winning row as array" do
       parser.board_state["A1"] = "X"
-      parser.winning_row_spaces.should == [] 
+      parser.winning_row_spaces.should == []
       parser.board_state["A2"] = "X"
       parser.board_state["A3"] = "X"
-      parser.winning_row_spaces.should == ["A1", "A2", "A3"] 
+      parser.winning_row_spaces.should == ["A1", "A2", "A3"]
     end
   end
 end

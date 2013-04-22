@@ -8,10 +8,16 @@
       }
 
       function addPreview(){
-        return !taken($(this)) ? $(this).html("<span class='letterPreview'>" + playerLetter + "</span>") : false;
+        if(activeSpace($(this)))
+          return $(this).html("<span class='letterPreview'>" + playerLetter + "</span>");
+      }
+
+      function activeSpace(space) {
+        return !taken(space) && !gameOver;
       }
 
       function taken(field){
+        field = field instanceof($) ? field : $(field);
         return boardState[field.attr('id')] !== ""
       }
 
@@ -33,6 +39,7 @@
       }
 
       function updateBoardMarkup() {
+        console.log(boardState);
         $('td.field').each(function(){
           fieldID = $(this).attr('id');
           letter = boardState[fieldID];
@@ -40,35 +47,38 @@
         });
       }
 
-      function showWinner(winningRow, repeats) {
+      function showWinner(winningRow, blinkAmount) {
         $('td.field').each(function(){
           if($.inArray($(this).attr('id'), winningRow) > -1){
-            for(i=0;i<repeats;i++){
+            for(i=0;i<blinkAmount;i++){
               $(this).fadeOut(300).fadeIn(300);
             }
           }
         });
       }
 
-
       $('td.field').click(function(){
         var id = $(this).attr('id');
-        if(!taken($(this))){
+        if(activeSpace($(this))){
           boardState[id] = playerLetter;
           $.ajax({
             type: "POST",
             url: "/games/" + <%= @game.id %> + "/move",
             data: {board_state: boardState},
-            success: function(data) { updateBoardState($.parseJSON(data.boardState)); updateGameStatus(data) },
-            error: function(data) { updateBoardState($.parseJSON(data.responseText)); updateGameStatus($.parseJSON(data.responseText))},
-            dataType: "JSON"
+            success: function(data) { updateBoardState(data.boardState), updateGameStatus(data) },
+            error: function(data) { updateBoardState($.parseJSON(data.responseText).boardState), updateGameStatus(data.responseText) },
+            dataType: "json"
           });
+        } else {
+          endGame();
+          showWinner(winningRow, 3);
         }
       });
 
       playerLetter = "X";
-      boardState = <%= @board_state.html_safe %>;
-      gameOver = false;
+      boardState = <%= raw @board_state %>;
+      gameOver = <%= @parser.game_over? %>;
+      winningRow = <%= raw @parser.winning_row_spaces %>;
 
       updateBoardMarkup(boardState);
       $('td.field').hover(addPreview, clear);

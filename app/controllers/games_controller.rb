@@ -27,7 +27,6 @@ class GamesController < ApplicationController
 
   def show
     @board_state = @game.board_state.to_json
-    @parser = BoardParser.new({board: Board.new(@game.board_state)})
     @game_types = GAME_TYPES.keys
   end
 
@@ -42,6 +41,7 @@ class GamesController < ApplicationController
 
   def find_game
     @game = Game.find(params[:id])
+    @parser = BoardParser.new({board: Board.new(@game.board_state)})
   end
 
   def check_token
@@ -53,7 +53,7 @@ class GamesController < ApplicationController
   end
 
   def render_board_state_json(status)
-    render(json: {boardState: @game.board_state.to_json, gameOver: @parser.game_over?}, status: status) 
+    render(json: {boardState: @game.board_state, gameOver: @parser.game_over?, winningRow: @parser.winning_row_spaces}.to_json, status: status)
   end
 
   def valid_player?
@@ -62,7 +62,7 @@ class GamesController < ApplicationController
 
   def valid_board_state?
     GameStateValidation.new(@game.board_state, params[:board_state]).valid?
-  end 
+  end
 
   def new_board_state
     params[:board_state][computer_move] = "O" # change to @computer
