@@ -39,7 +39,6 @@
       }
 
       function updateBoardMarkup() {
-        console.log(boardState);
         $('td.field').each(function(){
           fieldID = $(this).attr('id');
           letter = boardState[fieldID];
@@ -69,8 +68,7 @@
             error: function(data) { updateBoardState($.parseJSON(data.responseText).boardState), updateGameStatus(data.responseText) },
             dataType: "json"
           });
-        } else {
-          endGame();
+        } else if(gameOver){
           showWinner(winningRow, 3);
         }
       });
