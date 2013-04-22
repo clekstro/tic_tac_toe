@@ -23,10 +23,6 @@ Then(/^the computer should respond$/) do
   end
 end
 
-Then(/^it should be my turn to play$/) do
-  pending # express the regexp above with the code you wish you had
-end
-
 Given(/^someone else started a computer game$/) do
   pending # express the regexp above with the code you wish you had
 end

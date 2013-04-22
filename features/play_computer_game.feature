@@ -7,7 +7,6 @@ Feature: Play Against Computer
     And I make my first move
     Then my move should be visible
     And the computer should respond
-    And it should be my turn to play
 
   Scenario: End of Game (Victory)
     Given a player has won

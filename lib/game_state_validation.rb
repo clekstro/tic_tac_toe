@@ -1,3 +1,5 @@
+require_relative 'board'
+
 class GameStateValidation
   # Check that history is intact, one and only one move made in proper order
   def initialize(saved_state, passed_state)
@@ -64,7 +66,10 @@ class GameStateValidation
   end
 
   def game_over?
-    @saved_state.count { |k,v| v == "X" } == 3 || @saved_state.count { |k,v| v == "O" } == 3
+    rows = Board.new(@saved_state).all_rows
+    x_win = rows.count { |k,v| v == "X" } == 3
+    o_win = rows.count { |k,v| v == "O" } == 3
+    x_win || o_win
   end
 
   def pairs_with_values(hash)
