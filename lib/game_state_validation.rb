@@ -14,11 +14,15 @@ class GameStateValidation
   private
 
   def invalid?
-    security_risk? || forged_history? || no_move? || multiple_moves? || out_of_turn? || game_over?
+    security_risk? || forged_history? || invalid_move? || game_over?
   end
 
   def security_risk?
     invalid_keys? || invalid_values?
+  end
+
+  def invalid_move?
+    no_move? || multiple_moves? || out_of_turn?
   end
 
   def invalid_keys?

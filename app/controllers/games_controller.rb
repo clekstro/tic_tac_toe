@@ -2,6 +2,7 @@ require 'json'
 require_relative '../../lib/game_state_validation'
 require_relative '../../lib/computer_strategy'
 require_relative '../../lib/board'
+require_relative '../../lib/player_validation'
 
 class GamesController < ApplicationController
   before_filter :find_game, only: [:show, :move]
@@ -16,7 +17,7 @@ class GamesController < ApplicationController
   end
 
   def create
-    @game = Game.new({ type: GAME_TYPES[params[:game_type]] })
+    @game = GameFactory.new(params, session).game
     if @game.save
       session[:game_token] = @game.token
       redirect_to game_path(@game)
@@ -57,7 +58,7 @@ class GamesController < ApplicationController
   end
 
   def valid_player?
-    session[:game_token] == @game.token
+    PlayerValidation.new(session, @game).valid?
   end
 
   def valid_board_state?
@@ -65,14 +66,9 @@ class GamesController < ApplicationController
   end
 
   def new_board_state
-    params[:board_state][computer_move] = "O" # change to @computer
-    @parser = BoardParser.new({board: Board.new(params[:board_state])})
-    params[:board_state]
+    new_state = MoveManager.new(@game, params[:board_state]).new_state
+    @parser = BoardParser.new({board: Board.new(new_state)})
+    new_state
   end
 
-  def computer_move
-    board = Board.new(params[:board_state])
-    parser = BoardParser.new({board: board})
-    ComputerStrategy.new(parser).best_move
-  end
 end

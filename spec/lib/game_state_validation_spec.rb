@@ -5,7 +5,7 @@ describe GameStateValidation do
     {
       "A1"=>"X",
       "A2"=>"X",
-      "A3"=>"O" 
+      "A3"=>"O"
     }
   end
   context "#invalid?" do
@@ -39,7 +39,7 @@ describe GameStateValidation do
         "A2"=>"X",
         "A3"=>"O",
         "B1"=>"X"
-      } 
+      }
       GameStateValidation.new(history, x_moves_again).valid?.should be_false
     end
 
