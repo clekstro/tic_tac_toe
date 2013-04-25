@@ -58,6 +58,12 @@ describe ComputerStrategy do
       board.board_state["B3"] = "X"
       subject.best_move.should be
     end
+    it "does not overwrite player moves" do
+      board.board_state["A1"] = "X"
+      board.board_state["B2"] = "O"
+      board.board_state["C3"] = "X"
+      subject.best_move.should_not == "C3"
+    end
   end
   context "no wasted moves" do
     it "does not waste move" do
@@ -81,12 +87,32 @@ describe ComputerStrategy do
       board.board_state["A3"] = "O"
       ["C1", "C2"].should include x_strategy.best_move
     end
-    it "defends against a fork" do
+    it "defends against a fork1" do
       board.board_state["B1"] = "X"
       board.board_state["B2"] = "O"
       board.board_state["C3"] = "X"
       subject.best_move.should_not == "A3"
-      ["C1","C2"].should include subject.best_move
+      ["C1","C2", "A1"].should include subject.best_move
+    end
+    it "defends against a fork2" do
+      board.board_state["B1"] = "X"
+      board.board_state["B2"] = "O"
+      board.board_state["A2"] = "X"
+      subject.best_move.should_not == "C2"
+    end
+    it "defends against a fork3" do
+      board.board_state["B1"] = "X"
+      board.board_state["B2"] = "O"
+      board.board_state["C3"] = "X"
+      board.board_state["C2"] = "O"
+      board.board_state["A2"] = "X"
+      subject.best_move.should_not == "B3"
+    end
+    it "defends against a fork4" do
+      board.board_state["A1"] = "X"
+      board.board_state["B2"] = "O"
+      board.board_state["C3"] = "X"
+      subject.parser.board.corners.should_not include subject.best_move
     end
   end
 end

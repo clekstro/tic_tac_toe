@@ -111,7 +111,7 @@ describe BoardParser do
       parser.board_state["C3"] = "X"
       parser.board_state["B2"] = "O"
       parser.board_state["B1"] = "X"
-      parser.move_enables_fork_for?("A3", "X").should be_true
+      parser.move_creates_fork_for?("C1", "X").should be_true
     end
 
     it "knows when game is over" do
@@ -124,19 +124,35 @@ describe BoardParser do
       parser.game_over?.should be_true
     end
 
+    it "finds moves composing potential fork" do
+      parser.board_state["A2"] = "X"
+      parser.board_state["B2"] = "O"
+      parser.board_state["B1"] = "X"
+      parser.forks(["A1"], "X").should include "B1", "A2"
+    end
+
+    it "finds moves composing potential fork2" do
+      parser.board_state["B1"] = "X"
+      parser.board_state["B2"] = "O"
+      parser.board_state["C3"] = "X"
+      parser.forks(["C1"], "X").should include "B1", "C3"
+    end
+
+    it "finds moves composing forks with multiple forks" do
+      parser.board_state["A2"] = "X"
+      parser.board_state["B2"] = "O"
+      parser.board_state["B1"] = "X"
+      parser.board_state["C2"] = "O"
+      parser.board_state["C3"] = "X"
+      parser.forks(["A1", "A3"], "X").should include "B1", "A2", "C3"
+    end
+
     it "retrieves spaces of winning row as array" do
       parser.board_state["A1"] = "X"
       parser.winning_row_spaces.should == []
       parser.board_state["A2"] = "X"
       parser.board_state["A3"] = "X"
       parser.winning_row_spaces.should == ["A1", "A2", "A3"]
-    end
-
-    it "recognizes wasting moves" do
-      parser.board_state["B3"] = "X"
-      parser.board_state["B2"] = "O"
-      parser.board_state["C1"] = "X"
-      parser.wasteful_moves.should include "B1"
     end
 
     it "detects opponent in corner" do
@@ -146,15 +162,26 @@ describe BoardParser do
       parser.opponent_in_corner?.should be_true
     end
 
+    it "caclulates opposite corner" do
+      parser.board_state["A1"] = "X"
+      parser.opposite_corner_from("X").should == "C3"
+    end
+
     it "detects two in a row" do
       parser.board_state["A1"] = "X"
-      parser.two_in_a_row?("C1", "X").should be_false
-      parser.two_in_a_row?("B1", "X").should be_true
+      parser.makes_two_in_a_row?("C1", "X").should be_false
+      parser.makes_two_in_a_row?("B1", "X").should be_true
+    end
+
+    it "identifies open center" do
+      parser.board_state["B2"] = "X"
+      parser.center_open?.should be_false
     end
 
     it "detects whose turn it is" do
       parser.board_state["A1"] = "X"
       parser.player_turn?("X").should be_false
     end
+
   end
 end
