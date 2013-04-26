@@ -114,5 +114,11 @@ describe ComputerStrategy do
       board.board_state["C3"] = "X"
       subject.parser.board.corners.should_not include subject.best_move
     end
+    it "defends against a fork5" do
+      board.board_state["B2"] = "O"
+      board.board_state["B1"] = "X"
+      board.board_state["C2"] = "X"
+      subject.best_move.should_not == "A3"
+    end
   end
 end

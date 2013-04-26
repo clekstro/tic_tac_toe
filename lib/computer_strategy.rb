@@ -64,9 +64,7 @@ class ComputerStrategy
 
   def prevent_fork_move
     opponent_forks = @parser.open_spaces.select { |move| @parser.move_creates_fork_for?(move, @parser.opponent) }
-    ideal = select_fork_move(opponent_forks, @parser.forks(opponent_forks, @parser.opponent))
-    return ideal if ideal
-    opponent_forks.sample # fallback to something -- less ideal?
+    select_fork_move(opponent_forks, @parser.forks(opponent_forks, @parser.opponent))
   end
 
 
@@ -81,13 +79,19 @@ class ComputerStrategy
     edge_move = random_from_non_empty(edge_connections)
     corner_connections = (connected_moves &  @parser.board.corners)
     corner_move = random_from_non_empty(corner_connections)
-    return corner_move if (fork_moves & @parser.edges).size == 2
+    return shared_corner_move(forks, corner_connections) if (fork_moves & @parser.edges).size == 2
     return forks.sample if (fork_moves & @parser.board.corners).size == 1
     return edge_move
   end
 
   def safe_two_in_a_row(player, moves)
     moves.select {|move| @parser.makes_two_in_a_row?(move, player)}
+  end
+
+  def shared_corner_move(forks, corner_connections)
+    spaces = (forks + corner_connections).uniq
+    rows = @parser.rows_for(spaces)
+    @parser.shared_spaces_for(rows)
   end
 
   def random_from_non_empty(collection)

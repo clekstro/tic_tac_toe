@@ -137,6 +137,18 @@ class BoardParser
     fork_rows.flatten & opponent_moves
   end
 
+  def fork_rows_for(fork)
+    @board.all_rows.select { |row| row.include?(fork) }
+  end
+
+  def rows_for(moves)
+    @board.all_rows.select { |row| !(row & moves).empty? }
+  end
+
+  def shared_spaces_for(rows)
+    rows.flatten.detect { |i| rows.flatten.count(i) > 1 }
+  end
+
   private
 
   def creates_connected_moves_for?(row, move, player)
