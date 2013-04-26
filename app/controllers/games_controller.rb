@@ -8,15 +8,12 @@ class GamesController < ApplicationController
   before_filter :check_token, only: [:show, :move]
   before_filter :check_board_state, only: [:move]
 
-  GAME_TYPES = {"human" => "HumanGame", "computer" => "ComputerGame"}
-
   def new
     @game = Game.new
-    @game_types = GAME_TYPES.keys
   end
 
   def create
-    @game = Game.new({ type: GAME_TYPES[params[:game_type]] })
+    @game = Game.new({ type: "ComputerGame" })
     if @game.save
       session[:game_token] = @game.token
       redirect_to game_path(@game)
@@ -27,7 +24,6 @@ class GamesController < ApplicationController
 
   def show
     @board_state = @game.board_state.to_json
-    @game_types = GAME_TYPES.keys
   end
 
   def move

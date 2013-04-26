@@ -22,8 +22,12 @@
       }
 
       function endGame() {
-        $('.instruction').html('<p class="notice">GAME OVER!</p><%= escape_javascript(render :partial => '/games/form') %>');
+        updateMessage();
         gameOver = true;
+      }
+
+      function updateMessage() {
+        $('.instruction').html('<p class="notice">Want A Rematch?</p><%= escape_javascript(render :partial => '/games/form') %>');
       }
 
       function updateBoardState(state) {
@@ -79,6 +83,7 @@
       winningRow = <%= raw @parser.winning_row_spaces %>;
 
       updateBoardMarkup(boardState);
+      gameOver ? updateMessage() : false;
       $('td.field').hover(addPreview, clear);
     });
   </script>
